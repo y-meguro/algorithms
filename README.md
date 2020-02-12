@@ -1,4 +1,4 @@
-# competitive-programming
+# algorithms
 
 ## About this repository
 
