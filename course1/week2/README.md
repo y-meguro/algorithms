@@ -1,5 +1,3 @@
-各授業で習ったことの抜粋、および自分で調べたことや感じたことのメモを書いています
-
 # Part 3: Divide & Conquer Algorithms
 
 ## The Divide and Conquer Paradigm
