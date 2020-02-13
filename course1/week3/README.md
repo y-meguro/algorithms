@@ -67,3 +67,30 @@ swap A[l] and A[i - 1]
   - また、半分の pivot が 25-75% の間にある要素であれば実行時間は `O(n * log n)` になる
 - QuickSort の平均実行時間
   - `O(n * log n)`
+
+# Part 6: Quicksort Analysis
+
+- 準備(用語の定義)
+  - Sample Space Ω
+    - pivot をランダムに選択した、可能性のある全ての結果の集合
+  - C(σ)
+    - σ∈Ω に対して、C(σ) を 2 つの要素の比較回数の合計値とする
+  - E[C]
+    - 平均の比較回数。これが `O(n * log n)` になることを示したい
+  - Xij(σ)
+    - σ∈Ω、zi = ith smallest element of A、i < j として、Xij(σ) は zi, zj が σ の場合に QuickSort で比較される回数とする
+- A Decomposition Approach
+  - ∀σ, C(σ) = Σ(i=1 to n-1)Σ(j=i+1 to n) Xij(σ)
+  - よって E[C] = Σ(i=1 to n-1)Σ(j=i+1 to n) E[Xij]
+  - ここで E[Xij] = 0・Pr[Xij=0] + 1・Pr[Xij=1] = Pr[Xij=1]
+  - 以上より `E[C] = Σ(i=1 to n-1)Σ(j=i+1 to n) Pr[zi, zj get compared]` となる
+- Key Claim として、以下の主張が正しいことを証明する
+  - すべての i < j について、Pr[zi, zj get compared] = 2/(j - i + 1) となる
+  - 証明
+    - zi, zi+1, ..., zj-1, zj の中のどれかが pivot に選ばれることを考える
+    - 1: もし zi か zj が最初に選ばれたら、zi と zj は直接比較される
+    - 2: もし zi+1, ..., zj-1 のどれかが先に選ばれたら、zi と zj は直接比較されない
+    - 1・2 から Pr[zi, zj get compared] = 2/(j - i + 1) となる
+- よって、`E[C] = Σ(i=1 to n-1)Σ(j=i+1 to n) 2/(j - i + 1)` となる。
+  - `Σ(j=i+1 to n) 1/(j - i + 1)` は 1/2 + 1/3 +... となり、`Σ(i=1 to n-1)` は n 以下なので、`E[C] <= 2 * n * Σ(k=2 to n) 1/k` となる
+  - ここで `Σ(k=2 to n) 1/k <= ln n` なので `E[C] <= 2n * ln n` が示された
