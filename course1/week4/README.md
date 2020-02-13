@@ -52,3 +52,64 @@ if j < i
   - これらより、`Expected running time of Rselect <= E[cn * Σ(3/4)^j * Xj]`。この式を A とする
   - `A = cn * Σ(3/4)^j * E[Xj]`。ここで Proof 2 と 3 より E[Xj] <= 2 なので `A <= 2cn * Σ(3/4)^j`
   - ここで Σ(3/4)^j = 4 なので、`A <= 8cn = O(n)` となり、平均実行時間が O(n) となることが証明された
+
+## Deterministic Selection
+
+- Guaranteeing a Good Pivot
+  - "best" pivot は median
+  - goal
+    - 見つけた pivot が十分良いことを保証すること
+  - key idea
+    - use "median of medians"
+- A Deterministic ChoosePivot
+  - ChoosePivot(A, n)
+    - logically break A into n/5 groups of size 5 each
+    - sort each group
+    - copy n/5 medians into new array C
+    - recursively compute median of C
+    - return this as pivot
+- Pseudocode
+  - 以下のようになる
+  - Rselect と異なり、2 回の recursive call がある(`p = DSelect(C, n/5, n/10)` の分が多い)
+
+```
+DSelect(array A, length n, order statistic i)
+Break A into groups of 5, sort each group
+C = the n/5 "middle elements"
+p = DSelect(C, n/5, n/10)
+Partition A around p
+let j = new index of p
+if j == i
+  return p
+if j > i
+  return DSelect(1st part of A, j - 1, i)
+if j < i
+  return DSelect(2nd part of A, n - j, i - j)
+```
+
+- 実行時間
+  - O(n) となる
+    - 証明は後述
+- だが、実際は Rselect ほど良くない
+  - 以下の理由のため
+    - Worse constants
+      - big-Oh で隠れているが、定数部分が Rselect より悪い
+    - not-in-place
+      - DSelect では additional memory storage が必要になってしまう
+- Rough Recurrence
+  - T(n) を長さ n の配列が与えられた時の Dselect の最大実行時間とする
+  - ある定数 c >= 1 が存在し、以下のようになる。T(?) は 2 回目の recursive call のところと対応
+    - 1: T(1) = 1
+    - 2: T(n) <= c * n + T(n/5) + T(?)
+- The Key Lemma
+  - key lemma
+    - 2nd recursive call guaranteed to be on an array of size <= 7n/10 (roughly)
+  - rough proof
+    - k = n/5 = グループ数
+    - xi = ith smallest of the k "middle elements"
+    - よって、pivot は xk/2 と表せる
+  - goal
+    - 30% 以上の要素が xk/2 以下であり、30% 以上の要素が xk/2 以上であることを示したい
+  - key point
+    - ここで xk/2 は半分のグループの 3 番目の要素より大きく、半分のグループの 3 番目の要素より小さい
+    - なので、30% の要素よりは大きく、同様に 30% の要素よりは小さい
