@@ -113,3 +113,31 @@ if j < i
   - key point
     - ここで xk/2 は半分のグループの 3 番目の要素より大きく、半分のグループの 3 番目の要素より小さい
     - なので、30% の要素よりは大きく、同様に 30% の要素よりは小さい
+- Rough Recurrence(Revisited)
+  - T(1) = 1
+  - T(n) <= cn + T(n/5) + T(7n/10) (ここで、c >= 1)
+  - subproblem のサイズが n/5 と 7n/10 で異なるので、Master Method が使えない
+  - n と独立なある定数 a が存在し、すべての n >= 1 で T(n) <= an となることを示したい
+- 帰納法で示す
+  - a = 10c とし、すべての n >= 1 で T(n) <= an となることを示す
+  - n = 1 の時、T(1) = 1 <= a * 1。これは a >= 1 より成り立つ
+  - n < k のすべての k で成り立つとすると、n = k の時、T(n) <= cn + T(n/5) + T(7n/10) <= cn + a(n/5) + a(7n/10) <= n(c + 9a/10) = an となり、n = k でも成り立つ
+  - 以上より、すべての n について証明された
+
+## Sorting Lower Bound
+
+- 定理
+  - すべての比較ソート(comparison-based sorting)は、最悪実行時間が `Ω(n * logn)` となる
+- Comparison-Based Sort
+  - accesses input array elements only via comparisons
+    - 比較を行う時にだけ、input の配列の要素にアクセスするもの
+  - 比較ソートの例
+    - Merge Sort, Quick Sort, Heap Sort
+  - 非比較ソートの例
+    - Bucket Sort, Counting Sort, Radix Sort
+- 最悪実行時間が `Ω(n * logn)` となることの証明
+  - {1, 2, ..., n} が任意の順で並んだ配列が与えられたとする
+    - これは n! 通りある
+  - この配列を k 回の比較でソートすることを考える
+    - 正しくソートするには `2^k >= n!` を満たすような k でないとならない
+    - `2^k >= n! >= (n/2)^n/2` => `k >= n/2 * log2 n/2 = Ω(n * log n)`
