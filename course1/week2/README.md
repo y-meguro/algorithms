@@ -139,3 +139,84 @@ for i = 1 to |Sy| - 1
       - y 座標でソートされた Sy の各点は 8 つの領域の中に、最大でも 1 つしか入れない(距離が δ 以下になってしまうため)
       - よって自分が属している領域を除いて、最大 7 つ調べれば十分であることが示された
     - これは資料の絵を見た方がわかりやすい
+
+# Part 4: The Master Method
+
+## Motivation
+
+- Integer Multiplication をもう 1 度考える
+  - 2 つの整数を x, y として、`x = 10^n/2 * a + c` `y = 10^n/2 * b + d` と考えると `x * y = 10^n * ac + 10^n/2 * (ad + bc) + bd` だった
+  - T(n) を 2 つの n 桁の数字のかけ算に必要な最大の操作回数とする
+  - karatsuba ではなく普通に計算する場合
+    - Base Case: T(1) <= a constant
+    - For all n > 1: T(n) <= 4T(n/2) + O(n)
+  - karatsuba の場合
+    - Base Case: T(1) <= a constant
+    - For all n > 1: T(n) <= 3T(n/2) + O(n)
+
+## The Master Method
+
+- Cool Feature
+  - a "black box" for solving recurrences.
+- 仮定
+  - all subproblems have equal size.
+- Recurrence Format
+  - Base Case: 十分小さい n に対して、T(n) <= a costant
+  - For all larger n: `T(n) <= a * T(n/b) + O(n^d)`
+    - ここで a は再帰の回数 (>= 1)
+    - b は input size の縮小率 (> 1)
+    - d は combine step での実行時間の exponent (>= 0)
+    - a, b, d は n とは独立
+- The Master Method
+  - `T(n) = O(n^d * log n)` if a = b^d (case 1)
+  - `T(n) = O(n^d)` if a < b^d (case 2)
+  - `T(n) = O(n^logb a)` if a > b^d (case 3)
+- 例
+  - Merge Sort
+    - a = 2, b = 2, d = 1 なので a = b^d となり case 1
+    - `T(n) = O(n^d * log n) = O(n logn)`
+  - 二分探索
+    - a = 1, b = 2, d = 0 なので a = b^d となり case 1
+    - `T(n) = O(n^d * log n) = O(logn)`
+  - Integer Multiplication(普通に計算する場合)
+    - a = 4, b = 2, d = 1 なので a > b^d となり case 3
+    - `T(n) = O(n^logb a) = O(n^log2 4) = O(n^2)`
+  - karatsuba の場合
+    - a = 3, b = 2, d = 1 なので a > b^d となり case 3
+    - `T(n) = O(n^logb a) = O(n^log2 3) = O(n^1.59)`
+  - Strassen's Matrix Multiplication
+    - a = 7, b = 2, d = 2 なので a > b^d となり case 3
+    - `T(n) = O(n^logb a) = O(n^log2 7) = O(n^2.81)`
+  - もし T(n) <= 2T(n/2) + O(n^2) となるような再帰関数があれば
+    - a = 2, b = 2, d = 2 なので a < b^d となり case 2
+    - `T(n) = O(n^d) = O(n^2)` となる
+- The Master Method の証明
+  - Merge Sort でレベル別に処理を考えたのと同様に考える
+  - 仮定
+    - `T(1) <= c`
+    - `T(n) <= a * T(n/b) + c * n^d`
+    - また n は b の累乗とする
+  - level j = 0, 1, 2, ..., logb n の各レベルで、a^j 個の subproblems があり、それぞれのサイズは n/b^j となる
+  - すると各レベルでの処理は `<= a^j * c * (n/b^j)^d = c * n^d * (a/b^d)^j` となる
+  - すると `total work <= c * n^d * Σ(a/b^d)^j` となる(この式を A とする)。ただし Σ の範囲は j = 0 から logb n まで
+  - case 1 の場合
+    - a = b^d なので `A = c * n^d * (logb n + 1) = O(n^d * log n)`
+  - case 2 の場合
+    - a < b^d なので `A = c * n^d * (a/b^d)^(logb n + 1) * (1 + 1/(a/b^d - 1)) = O(n^d)`
+  - case 3 の場合
+    - a > b^d なので `A = c * n^d * (a/b^d)^(logb n + 1) * (1 + 1/(a/b^d - 1)) = O(n^d * (a/b^d)^(logb n)) = O(a^logb n)`
+    - これはレベル logb n での葉の数と同じ
+  - 以上より The Master Method が示された
+- 直観的な部分の補足
+  - `c * n^d * (a/b^d)^j` の RSP と RWS
+    - a = rate of subproblem proliferation(RSP)
+    - b^d = rate of work shrinkage(RWS)
+  - RSP = RWS
+    - 各レベルで同じ量の処理
+    - expect `O(n^d * log(n))`
+  - RSP < RWS
+    - レベルが上がるにつれ処理が減る => root での処理が最も多い
+    - expect `O(n^d)`
+  - RSP > RWS
+    - レベルが上がるにつれ処理が増える => 葉の部分での処理が最も多い
+    - expect `O(# leaves)`
