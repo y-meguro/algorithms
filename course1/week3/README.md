@@ -94,3 +94,47 @@ swap A[l] and A[i - 1]
 - よって、`E[C] = Σ(i=1 to n-1)Σ(j=i+1 to n) 2/(j - i + 1)` となる。
   - `Σ(j=i+1 to n) 1/(j - i + 1)` は 1/2 + 1/3 +... となり、`Σ(i=1 to n-1)` は n 以下なので、`E[C] <= 2 * n * Σ(k=2 to n) 1/k` となる
   - ここで `Σ(k=2 to n) 1/k <= ln n` なので `E[C] <= 2n * ln n` が示された
+
+# Part 7: Probability Review
+
+## Sample Space
+
+- Smaple Space Ω
+  - 日本語だと標本空間
+  - "all possible outcomes"
+  - i∈Ω とすると 確率 p(i) >= 0 となり、Σp(i) = 1 となる
+
+## Events
+
+- event は subset S ⊆ Ω のこと
+- 日本語だと事象
+- 例えばサイコロを 2 つ投げて目の合計が 7 になる事象を考えると S = {(1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1)} となり、Pr[S] = 1/6
+
+## Random Variables
+
+- 日本語だと確率変数
+- ある現象がいろいろな値を取りうるとき、取りうる値全体を確率変数 X として表す
+- 2 つのサイコロの目の合計だと 2 から 12 が取りうる値の範囲となる
+
+## Expectation
+
+- 日本語だと期待値
+- E(X) = average value of X = ΣX(i)・p(i)
+- 2 つのサイコロの目の合計だと、期待値は 7
+
+## Linearity of Expectation
+
+- 日本語だと期待値の線形性
+- 期待値は線形性を持つため、E[ΣXj] = ΣE[Xj] が成立する
+  - これが成り立つと、例えば E[X1 + X2] = E[X1] + E[X2] が成り立つ
+  - [高校数学における線形性の8つの例 | 高校数学の美しい物語](https://mathtrain.jp/linear)
+
+## Conditional Probability
+
+- 日本語だと条件付き確率
+- X, Y ⊆ Ω となる events として、Pr[X|Y] = Pr[X∩Y] / Pr[Y]
+
+## Independence (of Events)
+
+- 日本語だと独立
+- Events X, Y ⊆ Ω が independent ⇔ Pr[X∩Y] = Pr[X]・Pr[Y]
