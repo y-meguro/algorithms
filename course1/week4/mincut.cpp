@@ -8,7 +8,7 @@ int mincut(map<int, vector<int>>& graph) {
     auto itr = next(graph.begin(), a);
     int u = itr->first;
 
-    // 効率良く探せるように、2つ目の頂点は、1つ目の頂点とつながっているものから選択
+    // 2つ目の頂点は、1つ目の頂点とつながっているものから選択(厳密にはランダムでないが、これでランダムに辺を選んだことにする)
     int v = graph.at(u).at(rand() % graph.at(u).size());
 
     // 2つを統合する
