@@ -147,3 +147,46 @@
   - ベストな場合の仮定をしていた Heuristic Assumption をやめて、以下の仮定を考える
     - 最初の探索は key の値と独立して、ランダムに行われる
   - この場合の期待時間は 1/(1-α)^2 となる
+
+# Part 16: Bloom Filters (ブルームフィルタ)
+
+- データ構造の 1 つ
+  - [ブルームフィルタ - Wikipedia](https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%83%BC%E3%83%A0%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF)
+- 特徴
+  - 基本的には hash table と近く、挿入と探索が速い
+  - Hash Table との比較
+    - Pros
+      - 空間効率がいい
+    - Cons
+      - can't store an associated object
+      - 削除できない
+      - small false positive probability
+        - 偽陽性(陰性なのに誤って陽性と出てしまうこと)の確率が少しある。偽陰性(陽性なのに誤って陰性と出てしまうこと)はない
+- 使用例
+  - 基本的には空間効率が求められ、偽陽性が問題にならないもの
+  - Original: early spellcheckers
+  - Canonical: list of forbidden passwords
+  - Modern: network routers
+- 中身
+  - ingredients
+    - 1: n bit の配列
+    - k 個の hash functions h1, ..., hk
+  - insert(x)
+    - for i = 1, 2, ..., k に対して set A[hi(x)] = 1
+  - lookup(x)
+    - return TRUE <=> A[hi(x)] = 1 for every i = 1, 2, ..., k
+  - 偽陰性はない
+  - しかし、すべての k について hi(x) = 1 となるような y (y != x) があった場合、誤って陽性と判断してしまう
+- Heuristic Analysis
+  - intuition
+    - 直感的に空間効率とエラーはトレードオフになる
+  - 仮定
+    - すべての hi(x) はランダムであり、独立
+  - setup
+    - n bits のデータセット S を bloom filter に入れる
+    - この時、ある bit について 1 がセットされている確率は 1 - (1 - 1/n)^(k・|S|)
+      - (1 - 1/n)^(k・|S|) が 0 がセットされている確率
+    - `1 - (1 - 1/n)^(k・|S|) <= 1 - e^(-k・|S|/n) = 1 - e^-k/b`。ここで b = # of bits per object、n/|S|
+  - ここで集合 S に含まれない x が false positive となってしまう確率は `(1 - e^-k/b)^k` 以下。また `(1 - e^-k/b)^k` を error rank ε とする
+  - b を固定して ε を最小化するように設定すると `ε ≒ (1/2)^((ln 2)・b), b ≒ 1.44 * log2 1/ε` で、`k ≒ ln2・b ≒ 0.693`
+  - 例えば、b が 8 の場合、k を 5 か 6 にすると、エラーの確率は約 2%
