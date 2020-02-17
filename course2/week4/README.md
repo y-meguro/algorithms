@@ -71,3 +71,79 @@
   - 例: memory locations (2 の乗数をかけたもの)
     - h(x) = x mod 1000
     - これだと奇数の buckets は空になってしまう
+
+# Part 15: Universal Hashing
+
+## Universal Hashing
+
+- The Load of a Hash Table
+  - load factor (負荷率)
+    - α = (# of objects in hash table) / (# of buckets of hash table)
+  - upshot
+    - hash table のパフォーマンスを良くするには、負荷率をコントロールする必要がある
+    - hash table のパフォーマンスを良くするには、良い hash function が必要
+  - ideal
+    - super-clever な hash function が全データを均等に分散させること
+  - だがそんな hash function は存在しない。どんな hasu function でもうまく機能させないような data set が存在する
+- Solutions
+  - 1: Use a cryptographic hash function(SHA-2 など)
+  - 2: Use randomization
+    - design a family H of hash functions that for all data sets S, "almost all" functions h ∈ H spread S out "pretty evenly"
+- Overview of Universal Hashing
+  - 1: "good random hash function" の定義
+  - 2: 具体例の紹介
+  - 3: "good functions" が "good performance" を導くことの証明
+- Universal Hash Functions
+  - H を U から {0, 1, ..., n - 1} を作成する hash function の集合とする
+  - H is universal <=> U に属するすべての x, y (x != y) について、Pr h∈H[x, y collide] <= 1/n
+    - h は H の中からランダムに選ばれる。どの h についても衝突確率が 1/n 以下にならないと、universal とは言えない
+- 例: Hashing IP Addresses
+  - U を IP アドレスの集合とする。(x1, x2, x3, x4)の形式からなり、各 xi ∈ {0, 1, ..., 255}
+  - n を素数とし、hash function を 4 つ組(a1, a2, a3, a4)で定義する
+    - ai ∈ {0, 1, ..., n - 1} であり、ランダムに選ばれる
+  - ha: IP addresses → buckets を以下のように定義する
+    - ha(x1, x2, x3, x4) = (a1x1 + a2x2 + a3x3 + a4x4) mod n
+  - 証明
+    - 2 つの IP アドレス (x1, x2, x3, x4) と (y1, y2, y3, y4) について衝突確率を求める
+    - 仮定
+      - x4 != y4
+    - 衝突する場合は `a1x1 + a2x2 + a3x3 + a4x4 ≡ a1y1 + a2y2 + a3y3 + a4y4 (mod n)`
+    - <=> `a4(x4 - y4) ≡ Σ(i=1 to 3) ai(yi - xi) (mod n)`
+    - ここで、x4 - y4 は 0 ではないので、左辺は {0, 1, ..., n - 1} に等確率でなる(a4 はランダム、n は素数なので)
+
+## Chaining: Constant-Time Garantee
+
+- Scenario
+  - hash table を chaining で実装する。Hash function h は universal family H からランダムに選ばれる
+- 定理
+  - 全操作 O(1) で実行できる
+- 注意と仮定
+  - hash function h はランダムに選択されるとする
+  - |S| = O(n) と仮定する
+  - hash function の評価にかかるのは O(1) と仮定する
+- 証明
+  - S に存在しない x を探すとする
+  - 実行時間は `O(1) + O(list length in A[h(x)])`
+  - L を A[h(x)] の list の長さとする
+  - y ∈ S (y != x) について、以下のように定める
+    - Zy = 1 (if h(y) = h(x))
+    - Zy = 0 (otherwise)
+  - L = Σ(y∈S) Zy
+  - よって E[L] = Σ(y∈S) E[Zy] = Σ(y∈S) Pr[h(y) = h(x)] = |S|/n = load α = O(1)
+    - 最後は |S| = O(n) の仮定より
+
+## Open Addressing
+
+- 厳格に証明するのが難しい
+- Heuristic Assumption
+  - quick & dirty なやり方として、すべての n! の探索の確率が完全に等しいものと仮定する
+- Heuristic Analysis
+  - Heuristic Assumption のもとだと挿入の期待時間は ≒ 1/1-α (α は load)
+  - 証明
+    - random probe は空の slot を 1-α の確率で見つけられる
+  - 試行回数の期待値 E[N] = 1 + α・E[N] となる。ここで 1 は最初の試行、うまくいかない確率が α でその場合は 2 回目以降の期待値 E[N] をかける
+    - よって E[N] = 1/1-α
+- Linear Probing(線形探索)
+  - ベストな場合の仮定をしていた Heuristic Assumption をやめて、以下の仮定を考える
+    - 最初の探索は key の値と独立して、ランダムに行われる
+  - この場合の期待時間は 1/(1-α)^2 となる
