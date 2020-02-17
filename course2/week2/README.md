@@ -1,0 +1,72 @@
+# Part 11: Dijkstra's Shortest-Path Algorithm
+
+## Single-Source Shortest Paths
+
+- input
+  - 有向グラフ G = (V, E)
+  - それぞれの辺は負ではない、長さ le の辺
+  - 開始は点 s とする
+- output
+  - それぞれの v ∈ V に対して、 L(v) = s-v の最短パス を計算する
+- 仮定
+  - すべての v に対して、s から v のパスは存在するとする
+  - すべての e に対して、le >= 0 とする
+- BFS でいいのでは？
+  - すべての辺が le = 1 であれば BFS で計算できる
+  - しかし例えば、長さ 3 の辺を 3 本の長さ 1 の辺に変換しないといけず、グラフがとても大きくなってしまう
+  - これを解決するのが Dijkstra's shortest path algorithm
+
+## Dijkstra's Algorithm
+
+- 初期化
+  - X = [s] (対象となる点として、まずは開始となる点 s を入れる)
+  - A[s] = 0 (ここには開始点から各点への距離が入る)
+  - B[s] = empty path (これは説明用なので、実装時には使わない。shortest paths の経路を格納する)
+- Main Loop
+  - X != V となる間だけ while ループを回す (1 つずつ X に含まれる頂点を増やしていく)
+    - among all edges(v, w) ∈ E with v ∈ X, w ∉ X について A[v] + lvw が最小となるものを 1 つ選ぶ (これを v', w' と呼ぶ)
+      - add w' to X
+      - set A[w'] = A[v'] + lv'w'
+      - set B[w'] = B[v']u(v', w')
+- 注意
+  - negative length がない場合でしか、Dijkstra は利用できない
+  - 負の辺がない場合は、各時点での最小を選んでいけば、選んだ点まで最小であることが保証されるが、負の辺がある場合は、それが保障されない
+- 証明
+  - 負の辺を含まないすべての有向グラフにおいて、Dijikstra's algorithm がすべての最短経路を正しく計算できることを示す
+    - すなわち A[v] = L(v) ∀v ∈ V を示す(ここで A[v] は Dijkstra で計算した v までの最短パスの長さ、L[v] は実際の v までの最短パスの長さ)
+  - 帰納法で示す
+    - Base Case: A[s] = L[s] = 0
+    - k 回以下のすべての iteration で、説が正しいと仮定する
+    - k + 1 回目の時、選択した辺を (v', w') とする
+      - B[w'] = B[v']u(v', w')
+      - A[w'] = A[v'] + lv'w' = L(v') + lv'w'
+      - ここで s-w' となるすべてのパスの長さは L(v') + lv'w' 以上の値となるため、k + 1 回目の時も説は正しい。よって証明される
+- 実装
+  - 単純に実装すると実行時間は θ(mn)
+    - n - 1 回のループがあり、各ループで θ(m) の処理がある
+  - Heap Operations を利用して効率を良くする
+    - ヒープ
+      - 概念的には、完全にバランスの取れた binary tree
+      - すべてのノードで key <= childres's key となる
+      - extract-min by swapping up last leaf, bubbling down
+      - insert via bubbling up
+  - Two Invariants (2 つの不変条件)
+    - 1: elements in heap = vertices of V-X
+    - 2: for v ∉ X, Key[v] = smallest Dijkstra greedy score of an edge(u, v) in E with u in X
+      - 例えば X にある各点から v をつなぐ辺として score が 7, 3, 5 のものがあった場合、key は 3 になる
+        - ここで Dijkstra greedy score = A[v] + lvw
+      - もし辺が存在しない場合は +∞ をいれる
+  - Mintainig the Invariants
+    - 2 つ目の不変条件を満たすためにやること
+      - When w extracted from heap (i.e., added to X)
+        - for each edge(w, v) in E
+          - if v in V-X
+            - delete v from heap
+            - recompute key[v] = min{key[v], A[w] + lwv}
+            - re-Insert v into heap
+- 実行時間
+  - ヒープの処理が各 O(log n)
+  - n - 1 回抽出処理を行う
+  - 各辺 (v, w) はそれぞれ最大 1 回 Delete/Insert を行われる
+  - よって、ヒープの処理を行う回数が O(n + m) = O(m)
+  - 以上より実行時間は `O(m * log n)`
