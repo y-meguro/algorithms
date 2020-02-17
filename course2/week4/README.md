@@ -148,7 +148,7 @@
     - 最初の探索は key の値と独立して、ランダムに行われる
   - この場合の期待時間は 1/(1-α)^2 となる
 
-# Part 16: Bloom Filters (ブルームフィルタ)
+# Part 16: Bloom Filters
 
 - データ構造の 1 つ
   - [ブルームフィルタ - Wikipedia](https://ja.wikipedia.org/wiki/%E3%83%96%E3%83%AB%E3%83%BC%E3%83%A0%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF)
