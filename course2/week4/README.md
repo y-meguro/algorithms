@@ -1,0 +1,73 @@
+# Part 14: Hashing - The Basics
+
+- Supported Operations
+  - puropose
+    - maintain a (possibly evolving) set of stuff
+  - insert
+    - 新しいレコードの追加
+  - delete
+    - 既存レコードの削除
+  - lookup
+    - 特定レコードのチェック
+  - すべての処理が O(1) でできる
+- Application: De-Duplication (重複の削除)
+  - given
+    - a "stream" of objects
+  - goal
+    - remove duplicates
+    - 例: web site のユニークな visitor を記録する
+  - solution
+    - when new objects x arrives
+      - hash table H から x を探す
+      - 見つからなければ x を挿入する
+- Application: The 2-SUM Problem
+  - input
+    - ソートされていない n 個の整数が入っている配列 A
+    - ターゲットとなる sum t
+  - goal
+    - x + y = t となる x と y を A から取得できるかどうか決定する
+  - 単純にやると全探索で θ(n^2) 時間かかる
+  - Better な方法
+    - 1: A をソートする(θ(n log n))
+    - 2: A の各要素 x について t - x が A に存在するか二分探索する(θ(n log n))
+  - Amazing な方法
+    - 1: A の全要素を hash table H に入れる
+    - 2: 各 x について t - x を探す (こちらだと θ(n) でできる)
+- High-Level Idea
+  - setup
+    - universe U (all IP addresses など)
+  - goal
+    - want to maintain evolving set S ⊆ U
+  - naive solutions
+    - 1: Array-based solution (indexed by u)
+      - O(1) で操作できるが、θ(|U|) の空間が必要
+    - 2: List-based solution
+      - θ(|S|) space だが、探すのに θ(|S|) 時間必要
+  - solution
+    - 1: pick n = # of "buckets" with n ≒ |S|
+      - |S| が極端に大きくないと仮定する
+    - 2: hash function を選ぶ。h: U → {0, 1, 2, ..., n - 1}
+    - 3: 長さ n の配列 A を使って、x を A[h(x)] に格納する
+- Resolving Collisions
+  - distinct x, y ∈ U such that h(x) = h(y)
+  - solution
+    - 1: (separate) chaining
+      - 各 bucket に linked list を持たせる
+      - key x について、insert / delete / lookup する時、A[h(x)] にあるリストについて処理する
+    - 2: open addressing (only one object per bucket)
+      - key を格納できるまで、h1(x), h2(x),... と順々に探索していく
+- What Makes a Good Hash Function?
+  - point
+    - パフォーマンスは、どのように hash function を選ぶかに依存する
+  - "Good" hash function の特性
+    - Should lead to good performance
+      - すなわち、データをしっかり分散させること。完全にランダムな hasing は良い hash function
+    - Should be easy to store and very fast to evaluate
+- Bad Hash Functions
+  - 例: key が 10 桁の電話番号
+    - h(x) = x の最初の 3 桁
+    - h(x) = x の最後の 3 桁
+    - これらのような hash function だと、とても攻撃されやすい
+  - 例: memory locations (2 の乗数をかけたもの)
+    - h(x) = x mod 1000
+    - これだと奇数の buckets は空になってしまう
