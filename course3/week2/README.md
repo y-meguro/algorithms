@@ -74,3 +74,52 @@
       - この α(n) は inverse Ackermann function と言われる
       - [巨大数：アッカーマン関数とは | 高校数学の美しい物語](https://mathtrain.jp/ackermann)
       - Optimal deterministic MST algorithm で漸近的な実行時間は、θ(m) と θ(mα(n)) の間にあることはわかっているが、そのどこになるかはわかっていない
+
+# Part 22: Clustering
+
+## Clustering
+
+- informal goal
+  - n 個の "points" を "coherent groups" に分類する
+- 仮定
+  - input に対して (dis)similarity measure が与えられるとする
+    - 例えば、距離 d(p, q) のようなもの
+    - d(p, q) = d(q, p)
+- goal
+  - same cluster <=> "nearby"
+
+## Max-Spacing k-Clusterings
+
+- 仮定
+  - k = # of clusters desired とする
+  - p と q が separated の場合、2 つは異なるクラスタに所属するとする
+- 定義
+  - The spacing of a k-clustering is `min separated p,q d(p, q)`
+    - これが大きいほうがよい
+- Peoblem statement
+  - distance measure d と k が与えられた時、maximum spacing の k-clustering を計算する
+- A Greedy Algorithm
+  - 最初にすべての頂点を別々のクラスタに入れる
+  - Repeat only k clusters
+    - Let p, q = closest pair of separated points
+    - p と q を同じクラスタにマージする
+- 上記の貪欲法が正しいことの証明
+  - C1, ..., Ck を spacing S の greedy clustering とする
+  - C1^, ..., Ck^ を任意の別のクラスタリングとする。これのスペースが S 以下であることを示す
+  - Case 1
+    - Ci^ が Ci と等しい場合は、same spacing S を持つ
+  - Case 2
+    - Case 1 でない場合は、以下の条件を満たす p, q が存在する
+      - p, q は共通のクラスタ Ci に属する
+      - p, q は異なるクラスタ Ci^, Cj^ に属する
+- greedy algorithm の特徴
+  - もし 2 点 x, y が直接マージされる場合、d(x, y) <= S
+- Easy case: p と q が直接マージされていた場合
+  - ここで Case 2 の場合を考える。p と q は Ci にマージされているので、S >= d(p, q)。また、異なるクラスタに属しているので、C1^, ..., Ck^ の spacing 以上の大きさを持つ。つまり、`S >= d(p, q) >= spacing of C1^, ..., Ck^`
+- Tricky case: p と q が間接的にマージされた場合
+  - p と q は p, a1, a2, ..., al, q のパスで直接マージされているとする
+  - key point
+    - p ∈ Ci^, q ∉ Ci^ であるため、ある連続する aj, aj+1 について aj ∈ Ci^, aj+1 ∉ Ci^ となる
+    - すると以下より、S >= d(aj, aj+1) >= Spacing of C1^, ..., Ck^ が示される
+      - S >= d(aj, aj+1) については、aj, aj+1 が直接マージされているため
+      - d(aj, aj+1) >= Spacing of C1^, ..., Ck^ については、aj, aj+1 が separated のため
