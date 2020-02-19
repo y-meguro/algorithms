@@ -34,7 +34,7 @@
 - Week 4
   - [Part 14: Hashing - The Basics](https://github.com/y-meguro/algorithms/tree/master/course2/week4#part-14-hashing---the-basics)
   - [Part 15: Universal Hashing](https://github.com/y-meguro/algorithms/tree/master/course2/week4#part-15-universal-hashing)
-  - [Part 16: Bloom Filters](https://github.com/y-meguro/algorithms/tree/master/course2/week4#part-16-bloom-filters-%E3%83%96%E3%83%AB%E3%83%BC%E3%83%A0%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF)
+  - [Part 16: Bloom Filters](https://github.com/y-meguro/algorithms/tree/master/course2/week4#part-16-bloom-filters)
 
 ### Course 3: Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
 
