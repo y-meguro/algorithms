@@ -1,5 +1,4 @@
 *.out
-input.txt
 */slides/*
 *.code-workspace
 *.markdownlint.json
