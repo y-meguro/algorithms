@@ -106,3 +106,90 @@
       - これで実行時間は O(n log n) となる
     - さらに速くするには Sorting + O(n) additional work で行うやり方がある
       - 2 つの queue を利用して symbol を管理するやり方
+
+# Part 25: Introduction to Dynamic Programming
+
+## Weighted Independent Sets in Path Graphs
+
+- Problem Statement
+  - input
+    - 各頂点の負ではない weight ともに、path graph G = (V, E) が与えられる
+  - desired output
+    - total weight が最大化するような、隣接しない頂点の集合(この集合を independent set と呼ぶ)
+  - brute-force search
+    - 指数時間がかかる
+- A Greedy Approach
+  - 隣接しない頂点の中で max-weight となる頂点を前から順に選んでいく
+  - うまくいかない
+    - 例えば 1 - 4 - 5 - 4 と頂点が並ぶ時、この方法だと 1 + 5 = 6 を答えに選んでしまうが、8 が最適
+- A Divide & Conquer Approach
+  - 前半と後半に分けて、両者を組み合わせる
+  - しかし、前半の最後の頂点と後半の最初の頂点を選んだ時などのように、sub-solutions が conflict する場合がある
+    - なのでこちらもうまくいかない
+- Optimal Substructure
+  - 最適解の構造を推測する
+  - notation
+    - max-weight independent set(IS) を S ⊆ V とする
+    - vn = last vertex of path
+- A Case Analysis
+  - case 1: vn ∉ S, G' = G with vn deleted とする
+    - この場合、S は G' でも IS となる
+  - case 2: vn ∈ S とする
+    - この時、vn-1 は S に含まれない
+    - ここで G" = G with vn-1, vn deleted とする
+    - すると、G" の IS は S - {vn} となる
+- Toward an Algorithm
+  - upshot
+    - max-weight IS は以下のどちらか
+      - 1: max-weight IS of G'
+      - 2: vn + max-weight IS of G"
+  - corollay
+    - もし vn が max-weight IS に含まれるかどうかがわかるなら、以下のように再帰的に計算していけばいい
+      - S1 = max-weight IS of G'
+      - S2 = max-weight IS of G"
+      - S1 または S2 ∪ {vn} のうち良いほうを返す
+    - このやり方は正しいが、指数時間がかかってしまう
+- Eliminating Redundancy
+  - subproblem のキャッシュをテーブルに保持して、O(1) で lookup できるようにする
+  - 配列 A を用意して、A[i] に max-weight IS of Gi を入れる
+    - Gi は G の中の最初の i 個の点
+  - 初期化
+    - A[0] = 0, A[1] = w1
+  - Main loop
+    - for i = 2, 3, ..., n において A[i] = max{A[i - 1], A[i - 2] + wi}
+  - 実行時間
+    - O(n) でできる
+- Optimal Value vs Optimal Solution
+  - note
+    - max-weight IS の値は計算するが、IS にどの頂点が含まれるかは計算していない
+  - correct but not ideal
+    - 各 Gi に値だけでなく、optimal IS (どの頂点も含むか)も格納する
+  - better
+    - optimal solution を再構築できるように配列を埋めていく
+  - key point
+    - vi が Gi の max-weight IS に所属する <=> wi + max-weight IS of Gi-2 >= max-weight IS of Gi-1
+- A Reconstruction Algorithm
+  - A は optimal value が埋められた配列とする
+  - 以下のようになる
+  - 最後に返される S が max-weight IS of G
+  - 実行時間は O(n)
+
+```
+Let S = 0
+While i >= 1
+  if A[i - 1] >= A[i - 2] + wi
+    i -= 1
+  else
+    Add vi to S
+    i -= 2
+Return S
+```
+
+## Principles of Dynamic Programming
+
+- 上述の WIS algorithm は dynamic programming algorithm
+- Key
+  - 1: small number の subproblem を特定する
+  - 2: small subproblem の解を使って、素早く正確に "larger" subproblem を解く
+    - A[i] = max{A[i - 1], A[i - 2] + wi} のような感じ
+  - 3: すべての subproblem を解いた後、final solution を計算する
