@@ -133,3 +133,126 @@ for i = 1, 2, ..., n - 1
       - Permits more sophisticated route selection
     - Con
       - More space required
+
+# Part 30: All-Pairs Shortest Paths
+
+## Problem Definition
+
+- input
+  - 有向グラフ G = (V, E) が各辺 e ∈ E のコスト ce と共に与えられる
+- goal
+  - 以下のどちらかを出力する
+    - すべての u, v ∈ V のペアに対して、最短の u-v path の長さ
+    - negative cycle を含んでいること
+
+## Optimal Substructure
+
+- Motivation
+  - Floyd-Warshall algorithm
+    - O(n^3) 時間かかる
+    - negative edge length があっても大丈夫
+- Optimal Substructure
+  - G は negative cycle を持たないとする
+  - 任意の source i ∈ V, destination j ∈ V, k ∈ {1, 2, ..., n} を定める
+  - V(k) = {1, 2, ..., k} とする
+  - ここで P = shortest (cycle-free) i-j path with all internal nodes in V(k)
+  - P のすべての internal nodes は V(k) に含まれていなければならない
+  - case 1
+    - k が P の internal node に含まれない場合
+    - P は V(k - 1) で構成される shortest (cycle-free) i-j
+  - case 2
+    - k が P の internal node に含まれる場合
+    - P1 = V(k - 1) で構成される shortest (cycle-free) i-k
+    - P2 = V(k - 1) で構成される shortest (cycle-free) k-j
+
+## The Floyd-Warshall Algorithm
+
+- The Floyd-Warshall Algorithm
+
+```
+Let A = 3-D array(indexed by i, j, k)
+base cases: すべての i, j ∈ V に対して
+A[i, j, 0] = 0 if i == j
+           = cij if (i, j) ∈ E
+           = +∞ if i != j and (i, j) ∉ E
+for k = 1 to n
+  for i = 1 to n
+    for j = 1 to n
+      A[i, j, k] = min{A[i, j, k - 1], A[i, k, k - 1] + A[k, j, k - 1]}
+```
+
+- 実行時間
+  - 各 subproblem に対して O(1)
+  - 全部で O(n^3)
+- Odds and Ends
+  - question 1
+    - G が negative cycle を含む場合はどうなるか？
+      - A[i, i, n] < 0 となる i ∈ V が少なくとも 1 つはある
+  - question 2
+    - どうやって最短の i-j path を再構築するか？
+      - すべての i, j に対して B[i, j] = max label of an internal node on a shortest i-j path を計算しておく
+        - もし B[i, j] = k だったら再帰的に A[i, j, k] を計算すれば良い
+
+## A Reweighting Technique
+
+- Motivation
+  - recall
+    - APSP(All-Pairs Shortest Paths) は SSSP(Single-Source Shortest Path) を n 回実行するまで実行時間を減らすことができる
+    - つまり、nonnegative edge length の場合の Dijkstra だと O(m・n・log n)
+    - general edge length の場合の Bellman-Ford だと O(m・n^2)
+  - Johnson's algorithm
+    - APSP を 1 回の Bellman-Ford(O(m・n)) と n 回の Dijkstra(O(m・n・log n)) まで減らすことができる
+  - つまり実行時間は O(m・n) + O(m・n・log n) = O(m・n・log n)
+- Quiz
+  - 各点 v ∈ V に対して、実数 pv をそれぞれ設定するとする
+  - すべての辺 e = (u, v) のコスト ce を変形して、ce' = ce + pu - pv とする
+  - この時 s-t path P の長さを L とする(ce を利用した時)。ce' を利用した場合の長さはどうなるか
+    - ce' を利用した場合、L + ps - pt となる
+- Reweighting
+  - summary
+    - vertex weights {pv} を使って reweighting する
+    - すべての s-t path に同じ量 (ps - pt) を加算する
+  - この操作を行っても、選ばれる shortest path 自体は変わらない
+    - 値はこれまでの値 + ps - pt となる
+  - Why useful?
+    - G が negative edge length を持っているとする
+    - some {pv} を利用して reweighting すると、すべての edge length を nonnegative にできる
+      - このような pv は Bellman-Ford を利用して計算できる
+      - すると、このグラフに対して Dijkstra を適用できる
+
+## Johnson's Algorithm
+
+- input
+  - 有向グラフ G = (V, E) が 辺の長さ ce と共に与えられる
+- 手順
+  - 1: 以下のように G' を作成する
+    - new vertex s を追加
+    - すべての v ∈ G に対して、new edge (s, v) を length 0 で追加
+  - 2: Bellman-Ford を G' の source s に対して実行する
+    - もし negative-cost cycle を見つけたら、終了する
+  - 3: すべての v ∈ G に対して pv = length of a shortest s-v path in G' とする
+    - そして各辺 edge e = (u, v) ∈ G について ce' = ce + pu - pv とする
+  - 4: G の各頂点 u を source にして Dijkstra を実行する(この時の length は ce' を使う)
+    - これにより、shortest-path distance d'(u, v), v ∈ G を計算する
+  - 5: 各ペア u, v ∈ G に対して、最短距離 d(u, v) = d'(u, v) - pu + pv
+- Analysis of Johnson's Algorithm
+  - 実行時間は手順ごとに以下のようになる
+    - 1: O(n)
+    - 2: O(mn)。これは Bellman-Ford の実行時間
+    - 3: O(m)
+    - 4: O(nm・log n)
+    - 5: O(n^2)
+  - これらの合計 O(mn・log n) がこのアルゴリズムの実行時間となる
+    - これは O(n^3) と比べて、疎グラフの場合、改善されている(m の値が n^2 より n に近い場合)
+- Correctness of Johnson's Algorithm
+  - 以下を証明する
+    - すべての辺 e = (u, v) に対して、reweighted length ce' = ce + pu - pv が nonnegative となること
+  - 証明
+    - 以下のように定義する
+      - pu = G' での s-u の shortest path の長さ
+      - pv = G' での s-v の shortest path の長さ
+      - P = a shortest s-u path in G'
+    - すると P + (u, v) = an s-v path with length pu + cuv
+    - => shortest s-v path の pv が最も小さいので pv <= pu + cuv
+    - => cuv' = cuv + pu - pv >= 0
+    - よって、nonnegative であることが示された
