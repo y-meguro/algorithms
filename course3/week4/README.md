@@ -115,3 +115,82 @@ for i = 1 to m
     - A[i, j] が case 3 で埋められた場合、gap と yj をマッチさせて A[i, j - 1] に進む
   - もし i = 0 or j = 0 となったら残っているものを gap で埋める
   - 実行時間は O(m + n)
+
+# Part 28: Optimal Binary Search Trees
+
+## Introduction
+
+- Search Tree には様々なものがある
+- key の集合に対して "best" な探索木は balanced search tree(赤黒木のような)
+  - この場合、最悪実行時間は θ(log n)
+- だが、key の出現確率が異なる場合は、違うバランスの取れていない木のほうが平均探索時間が短い場合もある
+
+## Problem Definition
+
+- input
+  - 出現頻度 p1, p2, ..., pn が item 1, 2, ..., n に対して与えられる
+- goal
+  - weighted (average) search time を最小化する valid search tree を計算すること
+  - C(T) = Σpi・[search time for i in T] としてこれを最小化する
+  - 赤黒木の場合は O(log n)
+- Huffman Codes との比較
+  - 似ている所
+    - output が binary tree であること
+    - goal が「与えられた確率に対して average depth を最小化させること」であること
+  - 異なる所
+    - Huffman codes では制約が prefix-freeness であること
+    - こちらの場合、search tree の性質が制約となる
+
+## Optimal Substructure
+
+- Greedy Doesn't Work
+  - intuition
+    - 最も頻度の高い item は root から最も近いところにある
+  - ideas for greedy algorithms
+    - 最も出現確率の低いものから bottom-up で決めていく
+    - 最も出現確率の高いものから top-down で決めていく
+- Choosing the Root
+  - issue
+    - top-down で決めていく場合、root を選んだ影響が、その後にどのような影響を与えるか予測するのが難しい
+  - idea
+    - もし root を知っていたらどうか？
+- Optimal Substructure
+  - {1, 2, ..., n} からなる optimal BST があるとする。root r、left subtree T1, right subtree T2 とする
+  - この時、T1 は {1, 2, ..., r - 1} にとって最適化されていて、T2 は {r + 1, r + 2, ..., n} にとって最適化されている
+- 証明
+  - T は key が {1, 2, ..., n} の optimal BST
+  - T1 が {1, 2, ..., r - 1} にとって最適でないと仮定して矛盾を導く
+    - C(T1') < C(T1) なる T1' があるとする
+    - T1' を左側の子どもとして持つように T を変形したものを T' とする
+  - C(T) = Σpi・[search time for i in T] = pr・1 + Σ(i=1 to r-1) pi・[search time for i in T] + Σ(i=r+1 to n) pi・[search time for i in T]
+  - = Σ(i=1 to n) pi + Σ(i=1 to r-1) pi・[search time for i in T1] + Σ(i=r+1 to n) pi・[search time for i in T2]
+  - よって C(T) = Σ(i=1 to n) pi + C(T1) + C(T2)
+  - この時、C(T') = Σ(i=1 to n) pi + C(T1') + C(T2) だが、C(T1') < C(T1) の場合、C(T') < C(T) となってしまい、これは矛盾。よって主張が正しいことが示された
+
+## A Dynamic Programming Algorithm
+
+- note
+  - subproblem は original problem の prefix か suffix となる
+  - key より小さいものが prefix、大きいものが suffix
+- すると original item が {1, 2, ..., n} として、optimal BST を計算する必要がある subset S ⊆ {1, 2, ..., n} の範囲はどうなるか
+  - 連続する integrals S = {i, i + 1, ..., j - 1, j} for every i <= j
+- The Recurrence
+  - notation
+    - すべての 1 <= i <= j <= n に対して、Cij = weighted search cost of an optimal BST for the items {i, i + 1, ..., j - 1, j} とする
+  - recurrence
+    - すべての 1 <= i <= j <= n に対して、Cij = min(r=i to j){Σ(k=i to j) pk + Ci,r-1 + Cr+1,j}
+- The Algorithm
+
+```
+Let A = 2-D array  // A[i, j] は {i, .., j} の opt BST value
+for s = 0 to n - 1
+  for i = 1 to n
+    A[i, i + s] = min(r=i to i+s){Σ(k=i to i+s) pk + A[i, r - 1] + A[r + 1, i + s]}
+Retrun A[1, n]
+```
+
+- 実行時間
+  - subproblem の数が θ(n^2)
+  - 各計算に θ(j - i)
+  - なので全てで θ(n^3)
+  - しかし、この DP の改良版は θ(n^2) で実行できるようになっている
