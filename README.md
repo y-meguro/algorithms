@@ -39,9 +39,21 @@
 ### Course 3: Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
 
 - Week 1
+  - [Part 17: Two Motivating Applications](https://github.com/y-meguro/algorithms/tree/master/course3/week1#part-17-two-motivating-applications)
+  - [Part 18: Introduction to Greedy Algorithms](https://github.com/y-meguro/algorithms/tree/master/course3/week1#part-18-introduction-to-greedy-algorithms)
+  - [Part 19: A Scheduling Application](https://github.com/y-meguro/algorithms/tree/master/course3/week1#part-19-a-scheduling-application)
+  - [Part 20: Prim's Minimum Spanning Tree Algorithm](https://github.com/y-meguro/algorithms/tree/master/course3/week1#part-20-prims-minimum-spanning-tree-algorithm)
 - Week 2
+  - [Part 21: Kruskal's Minimum Spanning Tree Algorithm](https://github.com/y-meguro/algorithms/tree/master/course3/week2#part-21-kruskals-minimum-spanning-tree-algorithm)
+  - [Part 22: Clustering](https://github.com/y-meguro/algorithms/tree/master/course3/week2#part-22-clustering)
+  - [Part 23: Advanced Union-Find](https://github.com/y-meguro/algorithms/tree/master/course3/week2#part-23-advanced-union-find)
 - Week 3
+  - [Part 24: Huffman Codes](https://github.com/y-meguro/algorithms/tree/master/course3/week3#part-24-huffman-codes)
+  - [Part 25: Introduction to Dynamic Programming](https://github.com/y-meguro/algorithms/tree/master/course3/week3#part-25-introduction-to-dynamic-programming)
 - Week 4
+  - [Part 26: The Knapsack Problem](https://github.com/y-meguro/algorithms/tree/master/course3/week4#part-26-the-knapsack-problem)
+  - [Part 27: Sequence Alignment](https://github.com/y-meguro/algorithms/tree/master/course3/week4#part-27-sequence-alignment)
+  - [Part 28: Optimal Binary Search Trees](https://github.com/y-meguro/algorithms/tree/master/course3/week4#part-28-optimal-binary-search-trees)
 
 ### Course 4: Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
 
