@@ -35,7 +35,7 @@ int main() {
 
   map<int, vector<int>> G;
 
-  ifstream ifs("input.txt");
+  ifstream ifs("kargerMinCut.txt");
   string line;
   for (int row = 0; getline(ifs, line); row++) {
     istringstream stream(line);
