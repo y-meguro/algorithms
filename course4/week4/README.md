@@ -210,3 +210,92 @@
     - Pr[algorithm fails] <= Pr[all log2 n independent trails fail]
     - <= (1/2)^log2 n
     - = 1/n となり証明終わり
+
+# Part 35: The Wider World of Algorithms
+
+## Stable Matching
+
+- Stable Matchings(安定マッチング)
+  - 2 つの node set U と V を考える
+  - for simplicity
+    - |U| = |V| = n と仮定する
+    - 各 node はもう片方の全 nodes に対する ranked order を持つ
+  - stable matching
+    - 以下を満たすマッチング
+      - もし u ∈ U, v ∈ V がマッチしていないならば、u は v より良い v' とマッチしているまたは、v は u' より良い u とマッチしている
+- Gale-Shapley Proposal Algorithm
+  - while there is an unattached man u
+    - u がまだ断られていない中で、最も好みの woman v に対して申し込む
+    - 各 woman は best proposal を受け入れる
+  - theorem
+    - n^2 iterations 以内に終了する
+- Gale-Shapley Theorem
+  - 1: 各 man は n 回以下の proposal をする => n^2 iterations 以下となる
+  - 2: perfect matching で終了する
+    - perfect matching(完全マッチング)
+      - 無向グラフ G のマッチングとは、辺部分集合 M ⊆ E で、M のどの 2 辺も同じ頂点に接続しないもの
+      - G の完全マッチングとは、G のマッチング M ⊆ E で、G の任意の頂点に M のある辺が接続しているもの
+      - [数理解析 第 11回 マッチング](http://dopal.cs.uec.ac.jp/okamotoy/lect/2012/graphtheory/lect11.pdf)
+  - 3: stable matching で終了する。マッチしていないある u, v を考える
+    - case 1: u never proposed to v
+      - u は v よりも良い人とマッチしている
+    - case 2: u proposed to v
+      - v はより良い offer をもらっている
+
+## Bipartite Matching (二部マッチング)
+
+- input
+  - 二部グラフ G = (U, V, E)
+  - 各 e ∈ E は U と V それぞれに 1 つ endpoint を持つ
+- goal
+  - 最大サイズとなるようなマッチング M ⊆ E を計算する
+- fact
+  - 最大フロー問題に帰着できる
+- The Maximum Flow Problem
+- input
+  - 有向グラフ G = (V, E)
+  - 開始点 s と終了点 t
+  - 各辺 e は capacity ue を持つ
+- goal
+  - 可能な限りたくさんの flow を流せる s-t flow を計算する
+- fact
+  - 多項式時間で解ける
+
+## Selfish Flow
+
+- 家から職場までどのルートで行くのが早いか
+- flow network を考える
+- 各辺は delay function を持つ。例えば 100% の車が来ると 1 時間かかるが、50% の車の場合、30 分でつくというようなもの
+- 例
+  - 以下のグラフが与えられたとする
+    - s → v が delay(x) = x
+    - s → w が delay(x) = 1
+    - v → t が delay(x) = 1
+    - w → t が delay(x) = x
+  - steady state
+    - s → v と s → w は 50% ずつにわかれ、commute time は 1.5 hours
+  - Braess's Paradox
+    - もし v と w をテレポートできるとすると、すべての車は s → v → w → t と進むので、commute time は 2 時間かかるようになってしまう
+
+## Linear Programming (線形計画法)
+
+- 参考
+  - [線形計画法超入門 - Qiita](https://qiita.com/Dason08/items/e1bafb9ddc766d1c8fd0)
+  - [線形計画法の問題の解き方を詳しく解説！例題つき｜高校生向け受験応援メディア「受験のミカタ」](https://juken-mikata.net/how-to/mathematics/linear-programming.html)
+- The general problem
+  - いくつかの 1 次不等式および 1 次等式を満たす変数の値の中で、ある 1 次式を最大化または最小化する値を求める
+  - この問題は、最大フロー問題など多くの問題を一般化したものとなる
+- fact
+  - very powerful "black-box" subroutine を使って、効率よく解くことができる
+- extensions
+  - convex programming(凸計画問題)
+  - integer programming(整数計画問題)
+
+## Other Topics and Models
+
+- Geometric algorithms
+- Algorithms that run forever
+  - caching や routing など
+- Bounded memory ("streaming algorithms")
+- parallelism の開発
+  - Map-Reduce / Hadoop
