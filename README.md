@@ -58,6 +58,13 @@
 ### Course 4: Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
 
 - Week 1
+  - [Part 29: The Bellman-Ford Algorithm](https://github.com/y-meguro/algorithms/tree/master/course4/week1#part-29-the-bellman-ford-algorithm)
+  - [Part 30: All-Pairs Shortest Paths](https://github.com/y-meguro/algorithms/tree/master/course4/week1#part-30-all-pairs-shortest-paths)
 - Week 2
+  - [Part 31: NP-Complete Problems](https://github.com/y-meguro/algorithms/tree/master/course4/week2#part-31-np-complete-problems)
+  - [Part 32: Faster Exact Algorithms for NP-Complete Problems](https://github.com/y-meguro/algorithms/tree/master/course4/week2#part-32-faster-exact-algorithms-for-np-complete-problems)
 - Week 3
+  - [Part 33: Approximation Algorithms for NP-Complete Problems](https://github.com/y-meguro/algorithms/tree/master/course4/week3#part-33-approximation-algorithms-for-np-complete-problems)
 - Week 4
+  - [Part 34: Local Search Algorithms](https://github.com/y-meguro/algorithms/tree/master/course4/week4#part-34-local-search-algorithms)
+  - [Part 35: The Wider World of Algorithms](https://github.com/y-meguro/algorithms/tree/master/course4/week4#part-35-the-wider-world-of-algorithms)
