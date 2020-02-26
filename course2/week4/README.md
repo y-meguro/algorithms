@@ -84,7 +84,7 @@
     - hash table のパフォーマンスを良くするには、良い hash function が必要
   - ideal
     - super-clever な hash function が全データを均等に分散させること
-  - だがそんな hash function は存在しない。どんな hasu function でもうまく機能させないような data set が存在する
+  - だがそんな hash function は存在しない。どんな hash function でもうまく機能させないような data set が存在する
 - Solutions
   - 1: Use a cryptographic hash function(SHA-2 など)
   - 2: Use randomization
