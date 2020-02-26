@@ -4,7 +4,7 @@
 
 - [Algorithms | Coursera](https://www.coursera.org/specializations/algorithms) のログ
 
-## 目次
+## Contents
 
 ### Course 1: Divide and Conquer, Sorting and Searching, and Randomized Algorithms
 
