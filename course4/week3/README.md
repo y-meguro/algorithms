@@ -58,15 +58,15 @@
   - 3-step greedy algorithm >= total value of 1st k items
   - また step 3 により 3-step greedy algorithm >= value of (k + 1) item となる
   - すると 2・(3-step greedy algorithm) >= total value of 1st (k + 1) items
-  - >= total value of greedy fractional solution
-  - >= optimal knapsack solution となり、「3-step の greedy solution は optimal solution の 50% 以上の値を返す」ことが示された
+  - `>= total value of greedy fractional solution`
+  - `>= optimal knapsack solution` となり、「3-step の greedy solution は optimal solution の 50% 以上の値を返す」ことが示された
 - A Refined Analysis
   - suppose
     - アイテム i のサイズ wi <= capacity W の 10% とする
   - consequence
     - step 2 で、すべてのアイテムを詰められない場合、ナップスナックの 90% 以上が詰められていることになる
     - value of 2-step greedy algorithm >= 90% value of greedy fractional solution
-    - >= 90% value of optimal solution
+    - `>= 90% value of optimal solution`
 
 ## A Dynamic Programming Heuristic for Knapsack
 
